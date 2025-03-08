@@ -1,13 +1,6 @@
-
 import { ReactNode } from 'react';
 import InterviewTypeCard from '@/components/ui-elements/InterviewTypeCard';
-
-interface InterviewType {
-  id: string;
-  title: string;
-  description: string;
-  icon: ReactNode;
-}
+import { InterviewType } from './formData';
 
 interface InterviewTypeSelectionProps {
   interviewTypes: InterviewType[];
