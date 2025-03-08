@@ -9,7 +9,7 @@ This project consists of:
 
 - **Frontend**: React application with TypeScript, TailwindCSS, and shadcn UI components
 - **Backend**: Node.js with Express API server
-- **Database**: SQLite (through Prisma ORM)
+- **Database**: PostgreSQL (through Prisma ORM)
 
 ## Getting Started
 
@@ -98,4 +98,4 @@ This project consists of:
   - Node.js
   - Express
   - Prisma ORM
-  - SQLite
+  - PostgreSQL
