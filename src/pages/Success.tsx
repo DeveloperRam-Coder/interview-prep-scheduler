@@ -1,37 +1,33 @@
 
 import { useEffect } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
-import { CheckCircle, ArrowLeft, Calendar, Clock, User, Mail, Phone } from 'lucide-react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
+import { CheckCircle, ArrowRight, Calendar, Clock } from 'lucide-react';
+import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { format } from 'date-fns';
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 const Success = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const formData = location.state?.formData;
+  const { formData } = location.state || {};
   
   useEffect(() => {
-    // If the user navigates directly to this page without form data, redirect to schedule
     if (!formData) {
       navigate('/schedule');
     }
   }, [formData, navigate]);
   
-  if (!formData) return null;
+  if (!formData) {
+    return null;
+  }
   
-  const getInterviewTypeName = (type: string) => {
-    switch (type) {
-      case 'technical':
-        return 'Technical Interview';
-      case 'behavioral':
-        return 'Behavioral Interview';
-      case 'mock':
-        return 'Mock Interview';
-      default:
-        return 'Interview';
-    }
+  const interviewTypeLabels = {
+    technical: 'Technical Interview',
+    behavioral: 'Behavioral Interview',
+    mock: 'Mock Interview',
   };
   
   return (
@@ -39,85 +35,111 @@ const Success = () => {
       <Navbar />
       
       <section className="flex-1 pt-32 pb-16 md:pt-40 md:pb-24">
-        <div className="container">
-          <div className="max-w-2xl mx-auto glass rounded-2xl p-8 md:p-10 shadow-medium animate-scale-in">
-            <div className="flex flex-col items-center text-center mb-8">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary mb-6">
-                <CheckCircle className="h-8 w-8" />
-              </div>
-              <h1 className="text-2xl md:text-3xl font-medium text-foreground mb-4">Interview Scheduled Successfully!</h1>
-              <p className="text-muted-foreground">
-                Thank you for scheduling an interview with us. We've sent a confirmation email with all the details.
-              </p>
-            </div>
-            
-            <div className="bg-secondary/50 rounded-xl p-6 space-y-4 mb-8">
-              <h2 className="text-lg font-medium text-foreground mb-4">Interview Details</h2>
-              
-              <div className="flex items-start gap-3">
-                <Calendar className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Date</p>
-                  <p className="text-muted-foreground">{formData.date ? format(formData.date, 'PPPP') : 'Not specified'}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Clock className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Time</p>
-                  <p className="text-muted-foreground">{formData.time || 'Not specified'}</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <User className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Interview Type</p>
-                  <p className="text-muted-foreground">{getInterviewTypeName(formData.interviewType)}</p>
-                </div>
+        <div className="container max-w-4xl mx-auto">
+          <div className="text-center mb-12">
+            <div className="flex justify-center mb-8">
+              <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+                <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
             </div>
             
-            <div className="bg-secondary/50 rounded-xl p-6 space-y-4 mb-8">
-              <h2 className="text-lg font-medium text-foreground mb-4">Your Information</h2>
-              
-              <div className="flex items-start gap-3">
-                <User className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Name</p>
-                  <p className="text-muted-foreground">{formData.name}</p>
+            <h1 className="text-foreground mb-4">Interview Scheduled!</h1>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              Your interview has been successfully scheduled. We've sent a confirmation to your email with all the details.
+            </p>
+          </div>
+          
+          <Card className="shadow-lg border-primary/20 animate-scale-in">
+            <CardContent className="p-6 md:p-8">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-2xl font-semibold">Interview Details</h2>
+                  <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
+                    Confirmed
+                  </span>
                 </div>
-              </div>
-              
-              <div className="flex items-start gap-3">
-                <Mail className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Email</p>
-                  <p className="text-muted-foreground">{formData.email}</p>
-                </div>
-              </div>
-              
-              {formData.phone && (
-                <div className="flex items-start gap-3">
-                  <Phone className="h-5 w-5 text-primary mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Phone</p>
-                    <p className="text-muted-foreground">{formData.phone}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Candidate</p>
+                    <p className="font-medium">{formData.name}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Interview Type</p>
+                    <p className="font-medium">{interviewTypeLabels[formData.interviewType] || formData.interviewType}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Date</p>
+                    <div className="flex items-center">
+                      <Calendar className="mr-2 h-4 w-4 text-primary" />
+                      <p className="font-medium">
+                        {formData.date ? format(new Date(formData.date), 'EEEE, MMMM d, yyyy') : 'Not specified'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Time</p>
+                    <div className="flex items-center">
+                      <Clock className="mr-2 h-4 w-4 text-primary" />
+                      <p className="font-medium">{formData.time || 'Not specified'}</p>
+                    </div>
                   </div>
                 </div>
-              )}
-            </div>
+                
+                <Separator />
+                
+                <div className="space-y-2">
+                  <p className="text-sm text-muted-foreground">Contact Information</p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <p className="text-sm">Email: <span className="font-medium">{formData.email}</span></p>
+                    <p className="text-sm">Phone: <span className="font-medium">{formData.phone || 'Not provided'}</span></p>
+                  </div>
+                </div>
+                
+                {formData.additionalInfo && (
+                  <div className="space-y-2">
+                    <p className="text-sm text-muted-foreground">Additional Information</p>
+                    <p className="text-sm bg-secondary/50 p-3 rounded-md">{formData.additionalInfo}</p>
+                  </div>
+                )}
+                
+                <div className="bg-primary/5 p-4 rounded-lg">
+                  <h3 className="font-medium mb-2">Preparing for Your Interview</h3>
+                  <ul className="text-sm space-y-2">
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>Review your resume and be prepared to discuss your experiences</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>Research common interview questions for your interview type</span>
+                    </li>
+                    <li className="flex items-start">
+                      <span className="text-primary mr-2">•</span>
+                      <span>Check out our practice resources in the dashboard</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
             
-            <div className="flex justify-center">
-              <Link to="/">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <ArrowLeft className="h-4 w-4" />
-                  Back to Home
+            <CardFooter className="flex flex-col sm:flex-row gap-4 p-6 md:p-8 pt-0 md:pt-0">
+              <Link to="/" className="w-full sm:w-auto">
+                <Button variant="outline" className="w-full">
+                  Return Home
                 </Button>
               </Link>
-            </div>
-          </div>
+              <Link to="/dashboard" className="w-full sm:w-auto">
+                <Button className="w-full">
+                  Go to Dashboard
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </CardFooter>
+          </Card>
         </div>
       </section>
       
