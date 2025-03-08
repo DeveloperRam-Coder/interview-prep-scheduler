@@ -1,15 +1,10 @@
-
 import { Book, FileText, Video } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Resource } from '@/components/resources/ResourceCard';
 
-interface Resource {
-  id: string;
-  title: string;
-  type: 'article' | 'guide' | 'video';
-  url: string;
-}
+type DashboardResource = Pick<Resource, 'id' | 'title' | 'type'> & { url: string };
 
-const resources: Resource[] = [
+const resources: DashboardResource[] = [
   {
     id: '1',
     title: 'Top 10 Algorithm Problems for Technical Interviews',

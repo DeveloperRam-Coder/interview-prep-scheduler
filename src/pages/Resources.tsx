@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, FileText, Video, Book, BookOpen, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,7 +13,7 @@ import {
 } from '@/components/ui/card';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import ResourceCard from '@/components/resources/ResourceCard';
+import ResourceCard, { Resource } from '@/components/resources/ResourceCard';
 
 const resourceCategories = [
   { id: 'all', label: 'All Resources' },
@@ -37,7 +36,7 @@ const Resources = () => {
   const [selectedType, setSelectedType] = useState('all');
   
   // This would come from your backend in a real app
-  const resources = [
+  const resources: Resource[] = [
     {
       id: '1',
       title: 'Data Structures Cheat Sheet',
