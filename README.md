@@ -1,69 +1,101 @@
-# Welcome to your Lovable project
 
-## Project info
+# Interview Preparation Application
 
-**URL**: https://lovable.dev/projects/e3731da7-efcd-48fb-a6b8-c367ba5bd41e
+A full-stack application to help users prepare for technical, behavioral, and mock interviews.
 
-## How can I edit this code?
+## Project Structure
 
-There are several ways of editing your application.
+This project consists of:
 
-**Use Lovable**
+- **Frontend**: React application with TypeScript, TailwindCSS, and shadcn UI components
+- **Backend**: Node.js with Express API server
+- **Database**: SQLite (through Prisma ORM)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e3731da7-efcd-48fb-a6b8-c367ba5bd41e) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js (v16 or higher)
+- npm or yarn
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+#### Backend Setup
 
-Follow these steps:
+1. Navigate to the server directory:
+   ```
+   cd server
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+3. Create a `.env` file from the example:
+   ```
+   cp .env.example .env
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+4. Initialize the database:
+   ```
+   npm run prisma:migrate
+   ```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+5. Start the server:
+   ```
+   npm run dev
+   ```
+   The server will run on http://localhost:5000
 
-**Edit a file directly in GitHub**
+#### Frontend Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+1. In a new terminal, navigate to the project root directory
 
-**Use GitHub Codespaces**
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+3. Start the development server:
+   ```
+   npm run dev
+   ```
+   The application will run on http://localhost:5173
 
-## What technologies are used for this project?
+## API Endpoints
 
-This project is built with .
+### Interviews
+- GET /api/interviews - Get all interviews
+- GET /api/interviews/:id - Get interview by ID
+- POST /api/interviews - Create new interview
+- PUT /api/interviews/:id - Update interview
+- DELETE /api/interviews/:id - Delete interview
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Resources
+- GET /api/resources - Get all resources
+- GET /api/resources/:id - Get resource by ID
+- POST /api/resources - Create new resource
+- PUT /api/resources/:id - Update resource
+- DELETE /api/resources/:id - Delete resource
 
-## How can I deploy this project?
+### Users
+- GET /api/users - Get all users
+- GET /api/users/:id - Get user by ID
+- POST /api/users - Create new user
+- PUT /api/users/:id - Update user
+- DELETE /api/users/:id - Delete user
 
-Simply open [Lovable](https://lovable.dev/projects/e3731da7-efcd-48fb-a6b8-c367ba5bd41e) and click on Share -> Publish.
+## Technologies
 
-## I want to use a custom domain - is that possible?
+- **Frontend**:
+  - React
+  - TypeScript
+  - TailwindCSS
+  - shadcn UI
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+- **Backend**:
+  - Node.js
+  - Express
+  - Prisma ORM
+  - SQLite
