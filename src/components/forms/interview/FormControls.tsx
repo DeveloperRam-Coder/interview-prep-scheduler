@@ -23,7 +23,7 @@ const FormControls = ({ currentStep, handleBack, handleNext }: FormControlsProps
       )}
       
       <Button onClick={handleNext} className="transition-all duration-300">
-        {currentStep < 3 ? 'Next' : 'Schedule Interview'}
+        {currentStep < 3 ? 'Next' : currentStep === 3 ? 'Continue to Payment' : 'Complete Payment'}
       </Button>
     </div>
   );

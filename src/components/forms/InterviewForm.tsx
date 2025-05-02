@@ -6,6 +6,7 @@ import StepIndicator from './interview/StepIndicator';
 import InterviewPersonalDetails from './interview/InterviewPersonalDetails';
 import InterviewTypeSelection from './interview/InterviewTypeSelection';
 import InterviewScheduling from './interview/InterviewScheduling';
+import PaymentStep from './interview/PaymentStep';
 import FormControls from './interview/FormControls';
 import { interviewTypes, initialFormData, InterviewFormData } from './interview/formData';
 
@@ -13,6 +14,7 @@ const InterviewForm = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState<InterviewFormData>(initialFormData);
+  const [paymentCompleted, setPaymentCompleted] = useState(false);
   
   const updateField = (field: string, value: any) => {
     setFormData({ ...formData, [field]: value });
@@ -36,6 +38,8 @@ const InterviewForm = () => {
         toast.error('Please select both date and time');
         return;
       }
+      setCurrentStep(4);
+    } else if (currentStep === 4 && paymentCompleted) {
       // Submit the form
       handleSubmit();
     }
@@ -45,6 +49,15 @@ const InterviewForm = () => {
     setCurrentStep(currentStep - 1);
   };
   
+  const handlePaymentComplete = () => {
+    setPaymentCompleted(true);
+    handleSubmit();
+  };
+
+  const handlePaymentCancel = () => {
+    setCurrentStep(3);
+  };
+
   const handleSubmit = () => {
     // In a real app, you would send this data to your backend
     console.log('Submitting form data:', formData);
@@ -53,7 +66,7 @@ const InterviewForm = () => {
     toast.success('Interview scheduled successfully!');
     
     // Navigate to success page with form data
-    navigate('/success', { state: { formData } });
+    navigate('/success', { state: { formData, paymentCompleted } });
   };
   
   return (
@@ -89,13 +102,24 @@ const InterviewForm = () => {
           updateField={updateField}
         />
       )}
+
+      {/* Step 4: Payment */}
+      {currentStep === 4 && (
+        <PaymentStep 
+          onPaymentComplete={handlePaymentComplete}
+          onPaymentCancel={handlePaymentCancel}
+          interviewType={formData.interviewType}
+        />
+      )}
       
-      {/* Form controls */}
-      <FormControls 
-        currentStep={currentStep}
-        handleBack={handleBack}
-        handleNext={handleNext}
-      />
+      {/* Form controls - hide on payment step */}
+      {currentStep !== 4 && (
+        <FormControls 
+          currentStep={currentStep}
+          handleBack={handleBack}
+          handleNext={handleNext}
+        />
+      )}
     </div>
   );
 };

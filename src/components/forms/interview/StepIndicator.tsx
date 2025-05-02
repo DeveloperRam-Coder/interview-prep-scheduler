@@ -8,7 +8,7 @@ interface StepIndicatorProps {
 const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
   return (
     <div className="flex items-center justify-between mb-8">
-      {[1, 2, 3].map((step) => (
+      {[1, 2, 3, 4].map((step) => (
         <div key={step} className="flex flex-col items-center">
           <div
             className={cn(
@@ -23,7 +23,7 @@ const StepIndicator = ({ currentStep }: StepIndicatorProps) => {
             {step}
           </div>
           <span className="text-xs mt-2 text-muted-foreground">
-            {step === 1 ? 'Details' : step === 2 ? 'Type' : 'Schedule'}
+            {step === 1 ? 'Details' : step === 2 ? 'Type' : step === 3 ? 'Schedule' : 'Payment'}
           </span>
         </div>
       ))}

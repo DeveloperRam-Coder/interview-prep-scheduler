@@ -30,7 +30,7 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out-expo",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out-expo border-b-2 border-primary",
         isScrolled
           ? "py-3 bg-background/80 backdrop-blur-md shadow-soft"
           : "py-5 bg-transparent"
