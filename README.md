@@ -1,101 +1,72 @@
+Here’s how your app works, based on the current structure and code:
 
-# Interview Preparation Application
+---
 
-A full-stack application to help users prepare for technical, behavioral, and mock interviews.
+## **Overview**
 
-## Project Structure
+This is a minimal IT interview scheduling app for students. It allows users to:
+- View a landing page
+- Fill out forms to schedule an interview
+- See a success page after scheduling
+- Get notified of actions via toasts
 
-This project consists of:
+---
 
-- **Frontend**: React application with TypeScript, TailwindCSS, and shadcn UI components
-- **Backend**: Node.js with Express API server
-- **Database**: PostgreSQL (through Prisma ORM)
+## **Main Pages & Flow**
 
-## Getting Started
+1. **Landing Page (`/`)**
+   - Shows the app’s value proposition and features.
+   - Has a button to start scheduling an interview.
 
-### Prerequisites
+2. **Schedule Page (`/schedule`)**
+   - Contains a multi-step form (with components like `InterviewTypeSelection`, `InterviewPersonalDetails`, `InterviewScheduling`, `PaymentStep`).
+   - Users fill in their details, select interview type, pick a time, and (optionally) pay.
+   - On submit, the form data is sent to the backend (if connected).
 
-- Node.js (v16 or higher)
-- npm or yarn
+3. **Success Page (`/success`)**
+   - Shown after a successful interview booking.
+   - Confirms the booking and may show next steps or a summary.
 
-### Installation
+4. **NotFound Page (`*`)**
+   - Shown for any route that doesn’t exist.
 
-#### Backend Setup
+---
 
-1. Navigate to the server directory:
-   ```
-   cd server
-   ```
+## **UI Components**
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+- **Navbar & Footer:** Consistent navigation and branding.
+- **Toasts:** Show notifications for actions (success, error, etc.).
+- **Animated Logo & Calendar:** Visual enhancements for a modern look.
 
-3. Create a `.env` file from the example:
-   ```
-   cp .env.example .env
-   ```
+---
 
-4. Initialize the database:
-   ```
-   npm run prisma:migrate
-   ```
+## **How Data Flows**
 
-5. Start the server:
-   ```
-   npm run dev
-   ```
-   The server will run on http://localhost:5000
+- **Form Submission:**  
+  When a user fills out the scheduling form and submits, the data is sent to the backend API (if running). The backend would save the interview details in a database.
+- **Notifications:**  
+  Toasts appear for feedback (e.g., “Interview scheduled!” or error messages).
+- **Routing:**  
+  Uses React Router to switch between pages without reloading.
 
-#### Frontend Setup
+---
 
-1. In a new terminal, navigate to the project root directory
+## **What’s Removed**
 
-2. Install dependencies:
-   ```
-   npm install
-   ```
+- All dashboards, resources, practice, and profile features.
+- Only the core scheduling flow and supporting UI remain.
 
-3. Start the development server:
-   ```
-   npm run dev
-   ```
-   The application will run on http://localhost:5173
+---
 
-## API Endpoints
+## **How to Use**
 
-### Interviews
-- GET /api/interviews - Get all interviews
-- GET /api/interviews/:id - Get interview by ID
-- POST /api/interviews - Create new interview
-- PUT /api/interviews/:id - Update interview
-- DELETE /api/interviews/:id - Delete interview
+1. **Start the app** (usually with `npm run dev`).
+2. Go to `http://localhost:8080` in your browser.
+3. Click “Schedule Interview” on the home page.
+4. Fill out the form and submit.
+5. See the success page and any notifications.
 
-### Resources
-- GET /api/resources - Get all resources
-- GET /api/resources/:id - Get resource by ID
-- POST /api/resources - Create new resource
-- PUT /api/resources/:id - Update resource
-- DELETE /api/resources/:id - Delete resource
+---
 
-### Users
-- GET /api/users - Get all users
-- GET /api/users/:id - Get user by ID
-- POST /api/users - Create new user
-- PUT /api/users/:id - Update user
-- DELETE /api/users/:id - Delete user
-
-## Technologies
-
-- **Frontend**:
-  - React
-  - TypeScript
-  - TailwindCSS
-  - shadcn UI
-
-- **Backend**:
-  - Node.js
-  - Express
-  - Prisma ORM
-  - PostgreSQL
+If you want to connect the backend for real data storage, you’ll need to run the backend server as well.  
+Let me know if you want a step-by-step on that, or if you want to add more features!
