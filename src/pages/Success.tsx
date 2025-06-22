@@ -1,6 +1,7 @@
+import React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { CheckCircle, ArrowRight, Calendar, Clock, FileDown, Image, IndianRupee, AlertCircle } from 'lucide-react';
+import { CheckCircle, ArrowRight, Calendar, Clock, FileDown, Image } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import Navbar from '@/components/layout/Navbar';
@@ -13,7 +14,7 @@ import jsPDF from 'jspdf';
 const Success = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { formData, paymentCompleted = true } = location.state || {};
+  const { formData } = location.state || {};
   const cardRef = useRef<HTMLDivElement>(null);
   const [hideButtons, setHideButtons] = useState(false);
 
@@ -29,20 +30,18 @@ const Success = () => {
 
   const downloadAsImage = async () => {
     if (!cardRef.current) return;
-
     try {
       setHideButtons(true);
-      await new Promise((res) => setTimeout(res, 100)); // Wait for state update to reflect
+      await new Promise((res) => setTimeout(res, 100));
       const canvas = await html2canvas(cardRef.current, {
-        scale: Math.max(window.devicePixelRatio * 6, 8), // Higher scale for better quality
+        scale: Math.max(window.devicePixelRatio * 6, 8),
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff',
-        scrollY: -window.scrollY, // prevent vertical shift
+        scrollY: -window.scrollY,
         allowTaint: false,
-        removeContainer: true, // Clean up after capture
+        removeContainer: true,
       });
-      
       const image = canvas.toDataURL('image/png');
       const link = document.createElement('a');
       link.href = image;
@@ -57,18 +56,17 @@ const Success = () => {
 
   const downloadAsPDF = async () => {
     if (!cardRef.current) return;
-
     try {
       setHideButtons(true);
-      await new Promise((res) => setTimeout(res, 100)); // Wait for state update to reflect
+      await new Promise((res) => setTimeout(res, 100));
       const canvas = await html2canvas(cardRef.current, {
-        scale: Math.max(window.devicePixelRatio * 3, 4), // Higher scale for better quality
+        scale: Math.max(window.devicePixelRatio * 3, 4),
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff', // Solid white background for better contrast
+        backgroundColor: '#ffffff',
         allowTaint: false,
-        removeContainer: true, // Clean up after capture
-        scrollY: -window.scrollY // Prevent vertical shift
+        removeContainer: true,
+        scrollY: -window.scrollY
       });
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
@@ -76,9 +74,9 @@ const Success = () => {
         unit: 'mm',
         format: 'a4'
       });
-      const imgWidth = 190; // Slightly smaller to ensure margins
+      const imgWidth = 190;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight); // Add 10mm margins
+      pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
       pdf.save(`interview-confirmation-${formData.name.replace(/\s+/g, '-').toLowerCase()}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
@@ -96,7 +94,6 @@ const Success = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
       <section className="flex-1 pt-32 pb-16 md:pt-40 md:pb-24">
         <div className="container max-w-4xl mx-auto">
           <div className="text-center mb-12">
@@ -105,17 +102,11 @@ const Success = () => {
                 <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
               </div>
             </div>
-
-            <h1 className="text-foreground mb-4">
-              {paymentCompleted ? 'Interview Scheduled!' : 'Payment Required'}
-            </h1>
+            <h1 className="text-foreground mb-4">Interview Scheduled!</h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              {paymentCompleted 
-                ? "Your interview has been successfully scheduled. We've sent a confirmation to your email with all the details."
-                : "Your interview is pending payment. Please complete the payment to confirm your interview slot."}
+              Your interview has been successfully scheduled. We've sent a confirmation to your email with all the details.
             </p>
           </div>
-
           <Card 
             ref={cardRef} 
             style={{ 
@@ -132,22 +123,16 @@ const Success = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-2xl font-semibold text-black dark:text-white">Interview Details</h2>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${paymentCompleted ? 'bg-primary/10 text-primary' : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300'}`}>
-                    {paymentCompleted ? 'Confirmed' : 'Payment Pending'}
-                  </span>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">Candidate</p>
                     <p className="font-medium text-black dark:text-white">{formData.name}</p>
                   </div>
-
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">Interview Type</p>
                     <p className="font-medium text-black dark:text-white">{interviewTypeLabels[formData.interviewType] || formData.interviewType}</p>
                   </div>
-
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">Date</p>
                     <div className="flex items-center">
@@ -157,7 +142,6 @@ const Success = () => {
                       </p>
                     </div>
                   </div>
-
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">Time</p>
                     <div className="flex items-center">
@@ -166,9 +150,7 @@ const Success = () => {
                     </div>
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Contact Information</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -176,37 +158,12 @@ const Success = () => {
                     <p className="text-sm text-black dark:text-white">Phone: <span className="font-medium">{formData.phone || 'Not provided'}</span></p>
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <p className="text-sm text-muted-foreground">Payment Status</p>
-                  <div className="flex items-center gap-2 p-3 rounded-md bg-primary/5">
-                    {paymentCompleted ? (
-                      <>
-                        <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
-                        <div>
-                          <p className="text-sm font-medium text-black dark:text-white">Payment Completed</p>
-                          <p className="text-xs text-muted-foreground">₹100.00 - Interview Fee</p>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <AlertCircle className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                        <div>
-                          <p className="text-sm font-medium text-black dark:text-white">Payment Pending</p>
-                          <p className="text-xs text-muted-foreground">₹100.00 - Interview Fee</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                </div>
-
                 {formData.additionalInfo && (
                   <div className="space-y-2">
                     <p className="text-sm text-muted-foreground">Additional Information</p>
                     <p className="text-sm bg-secondary/50 p-3 rounded-md text-black dark:text-white font-medium">{formData.additionalInfo}</p>
                   </div>
                 )}
-
                 <div className="bg-primary/5 p-4 rounded-lg">
                   <h3 className="font-medium mb-2 text-black dark:text-white">Preparing for Your Interview</h3>
                   <ul className="text-sm space-y-2">
@@ -226,42 +183,22 @@ const Success = () => {
                 </div>
               </div>
             </CardContent>
-
             <CardFooter className="flex flex-col gap-4 p-6 md:p-8 pt-0 md:pt-0">
               {!hideButtons && (
                 <>
                   <div className="flex flex-col sm:flex-row gap-4 w-full">
-                    {paymentCompleted ? (
-                      <>
-                        <Link to="/" className="w-full sm:w-auto">
-                          <Button variant="outline" className="w-full">
-                            Return Home
-                          </Button>
-                        </Link>
-                        <Link to="/dashboard" className="w-full sm:w-auto">
-                          <Button className="w-full">
-                            Go to Dashboard
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                          </Button>
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link to="/schedule" className="w-full sm:w-auto">
-                          <Button variant="outline" className="w-full">
-                            Back to Schedule
-                          </Button>
-                        </Link>
-                        <Link to="/" className="w-full sm:w-auto">
-                          <Button className="w-full flex items-center gap-2">
-                            <IndianRupee className="h-4 w-4" />
-                            Complete Payment
-                          </Button>
-                        </Link>
-                      </>
-                    )}
+                    <Link to="/" className="w-full sm:w-auto">
+                      <Button variant="outline" className="w-full">
+                        Return Home
+                      </Button>
+                    </Link>
+                    <Link to="/dashboard" className="w-full sm:w-auto">
+                      <Button className="w-full">
+                        Go to Dashboard
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
                   </div>
-
                   <div className="flex flex-col sm:flex-row gap-4 w-full border-t pt-4">
                     <h3 className="text-sm font-medium mb-2 w-full">Download Confirmation:</h3>
                     <div className="flex gap-2 w-full sm:justify-end">
@@ -291,7 +228,6 @@ const Success = () => {
           </Card>
         </div>
       </section>
-
       <Footer />
     </div>
   );

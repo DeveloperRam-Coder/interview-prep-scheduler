@@ -1,4 +1,4 @@
-
+import React from 'react';
 import { Button } from '@/components/ui/button';
 
 interface FormControlsProps {
@@ -23,7 +23,7 @@ const FormControls = ({ currentStep, handleBack, handleNext }: FormControlsProps
       )}
       
       <Button onClick={handleNext} className="transition-all duration-300">
-        {currentStep < 3 ? 'Next' : currentStep === 3 ? 'Continue to Payment' : 'Complete Payment'}
+        {currentStep < 3 ? 'Next' : 'Schedule Interview'}
       </Button>
     </div>
   );
