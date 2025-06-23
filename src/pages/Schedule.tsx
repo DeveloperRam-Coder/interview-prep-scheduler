@@ -1,7 +1,8 @@
 
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import InterviewForm from '@/components/forms/InterviewForm';
+import React from 'react';
+import Navbar from '../components/layout/Navbar';
+import InterviewForm from '../components/forms/InterviewForm';
+import Footer from '../components/layout/Footer';
 
 const Schedule = () => {
   return (

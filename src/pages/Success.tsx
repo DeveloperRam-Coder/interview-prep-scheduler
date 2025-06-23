@@ -3,13 +3,13 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { CheckCircle, ArrowRight, Calendar, Clock, FileDown, Image } from 'lucide-react';
 import { format } from 'date-fns';
-import { Button } from '@/components/ui/button';
-import Navbar from '@/components/layout/Navbar';
-import Footer from '@/components/layout/Footer';
-import { Card, CardContent, CardFooter } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import Footer from '../components/layout/Footer';
+import Navbar from '../components/layout/Navbar';
+import { Button } from '../components/ui/button';
+import { Card, CardContent, CardFooter } from '../components/ui/card';
 
 const Success = () => {
   const location = useLocation();
@@ -150,7 +150,7 @@ const Success = () => {
                     </div>
                   </div>
                 </div>
-                <Separator />
+                <div className="border-t my-4" />
                 <div className="space-y-2">
                   <p className="text-sm text-muted-foreground">Contact Information</p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
