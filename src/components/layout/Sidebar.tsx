@@ -8,6 +8,7 @@ import {
   LogOut,
   Users,
 } from "lucide-react";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -99,15 +100,18 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
             <p className="truncate text-xs text-sidebar-foreground/70">{user?.role}</p>
           </div>
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full justify-start gap-3 text-sidebar-foreground/80 hover:bg-destructive/10 hover:text-destructive"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4" />
-          Log out
-        </Button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Button
+            variant="ghost"
+            size="sm"
+            className="flex-1 justify-start gap-3 text-sidebar-foreground/80 hover:bg-destructive/10 hover:text-destructive"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            Log out
+          </Button>
+        </div>
       </div>
     </div>
   );

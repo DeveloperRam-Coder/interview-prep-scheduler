@@ -107,6 +107,10 @@ export default {
 					from: { transform: 'scale(0.95)', opacity: '0' },
 					to: { transform: 'scale(1)', opacity: '1' }
 				},
+				float: {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
 				pulse: {
 					'0%, 100%': { opacity: '1' },
 					'50%': { opacity: '0.5' }
@@ -120,7 +124,8 @@ export default {
 				'slide-up': 'slide-up 0.4s ease-out',
 				'slide-down': 'slide-down 0.4s ease-out',
 				'scale-in': 'scale-in 0.2s ease-out',
-				'pulse-slow': 'pulse 3s infinite'
+				'pulse-slow': 'pulse 3s infinite',
+				'float': 'float 6s ease-in-out infinite'
 			},
 			boxShadow: {
 				'soft': '0 2px 15px rgba(0,0,0,0.03)',

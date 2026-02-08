@@ -36,7 +36,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 dashboard-page-bg">
+    <div className="min-h-screen flex items-center justify-center p-4 dashboard-page-bg transition-colors duration-300">
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
           <Link to="/" className="inline-flex items-center gap-2">
@@ -52,7 +52,7 @@ const Login = () => {
           <p className="text-sm text-muted-foreground">Sign in to your account</p>
         </div>
 
-        <Card className="border-border shadow-sm">
+        <Card className="border-border shadow-lg transition-all duration-300 hover:shadow-xl">
           <CardHeader>
             <CardTitle>Sign in</CardTitle>
             <CardDescription>

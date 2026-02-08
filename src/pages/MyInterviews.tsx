@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStatusBadgeClass } from "@/lib/status";
+import EmptyCalendar from "@/components/illustrations/EmptyCalendar";
 
 const MyInterviews = () => {
   const [interviews, setInterviews] = useState<any[]>([]);
@@ -120,10 +121,8 @@ const MyInterviews = () => {
           </CardHeader>
           <CardContent>
             {filteredInterviews.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground mb-4">
-                  <Calendar className="h-7 w-7" />
-                </div>
+              <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in duration-500">
+                <EmptyCalendar className="w-32 h-auto text-muted-foreground/60 mb-6" />
                 <CardTitle className="text-lg">No interviews found</CardTitle>
                 <CardDescription className="mt-1 mb-4">
                   {filter === "ALL"
@@ -138,10 +137,11 @@ const MyInterviews = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredInterviews.map((interview) => (
+                {filteredInterviews.map((interview, i) => (
                   <div
                     key={interview.id}
-                    className="flex flex-col gap-4 rounded-lg border border-border bg-muted/30 p-4 transition-colors hover:bg-muted/50 sm:flex-row sm:items-center sm:justify-between"
+                    className="flex flex-col gap-4 rounded-xl border border-border bg-muted/30 p-4 transition-all duration-300 hover:bg-muted/50 hover:shadow-md hover:border-primary/10 sm:flex-row sm:items-center sm:justify-between animate-in fade-in slide-in-from-bottom-2"
+                    style={{ animationDelay: `${i * 30}ms` }}
                   >
                     <div className="flex gap-4 min-w-0">
                       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">

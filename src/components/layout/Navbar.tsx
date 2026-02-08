@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
@@ -72,20 +73,18 @@ const Navbar = () => {
               {link.name}
             </Link>
           ))}
-          {user ? (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={logout}
-              className="ml-2"
-            >
-              Log out
-            </Button>
-          ) : (
-            <Link to="/login" className="ml-2">
-              <Button size="sm">Log in</Button>
-            </Link>
-          )}
+          <div className="flex items-center gap-1 ml-2">
+            <ThemeToggle />
+            {user ? (
+              <Button variant="outline" size="sm" onClick={logout}>
+                Log out
+              </Button>
+            ) : (
+              <Link to="/login">
+                <Button size="sm">Log in</Button>
+              </Link>
+            )}
+          </div>
         </nav>
 
         <Button
@@ -116,19 +115,18 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            {user ? (
-              <Button
-                variant="outline"
-                onClick={logout}
-                className="mx-4 mt-2"
-              >
-                Log out
-              </Button>
-            ) : (
-              <Link to="/login" className="mx-4 mt-2">
-                <Button className="w-full">Log in</Button>
-              </Link>
-            )}
+            <div className="mx-4 mt-2 flex items-center gap-2">
+              <ThemeToggle />
+              {user ? (
+                <Button variant="outline" onClick={logout} className="flex-1">
+                  Log out
+                </Button>
+              ) : (
+                <Link to="/login" className="flex-1">
+                  <Button className="w-full">Log in</Button>
+                </Link>
+              )}
+            </div>
           </div>
         </nav>
       )}

@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useNotifications } from '@/hooks/useNotifications';
 import { formatDistanceToNow } from 'date-fns';
 import type { Notification } from '@/hooks/useNotifications';
+import EmptyNotifications from '@/components/illustrations/EmptyNotifications';
 
 function NotificationItem({
   n,
@@ -76,8 +77,9 @@ export default function NotificationBell() {
         </div>
         <ScrollArea className="h-[280px]">
           {notifications.length === 0 ? (
-            <div className="py-8 text-center text-sm text-muted-foreground">
-              No notifications
+            <div className="py-10 flex flex-col items-center justify-center text-center">
+              <EmptyNotifications className="w-20 h-auto text-muted-foreground/50 mb-4" />
+              <span className="text-sm text-muted-foreground">No notifications</span>
             </div>
           ) : (
             notifications.map((n) => (

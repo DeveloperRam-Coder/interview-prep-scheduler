@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getStatusBadgeClass } from "@/lib/status";
+import EmptyCalendar from "@/components/illustrations/EmptyCalendar";
 
 const AdminInterviews = () => {
   const navigate = useNavigate();
@@ -123,10 +124,8 @@ const AdminInterviews = () => {
           </CardHeader>
           <CardContent>
             {filteredInterviews.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted text-muted-foreground mb-4">
-                  <Calendar className="h-7 w-7" />
-                </div>
+              <div className="flex flex-col items-center justify-center py-16 text-center animate-in fade-in duration-500">
+                <EmptyCalendar className="w-32 h-auto text-muted-foreground/60 mb-6" />
                 <CardTitle className="text-lg">No interviews found</CardTitle>
                 <CardDescription className="mt-1">
                   No interviews match the selected filter

@@ -1,5 +1,6 @@
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import NotificationBell from "@/components/notifications/NotificationBell";
 
 interface TopbarProps {
@@ -22,7 +23,10 @@ const Topbar = ({ title, onMenuClick }: TopbarProps) => {
       <h1 className="flex-1 text-lg font-semibold text-foreground truncate">
         {title}
       </h1>
-      <NotificationBell />
+      <div className="flex items-center gap-1">
+        <ThemeToggle />
+        <NotificationBell />
+      </div>
     </header>
   );
 };

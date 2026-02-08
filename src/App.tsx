@@ -1,4 +1,5 @@
 import React from "react";
+import { ThemeProvider } from "next-themes";
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -25,7 +26,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem storageKey="interview-haven-theme">
+      <AuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -49,6 +51,7 @@ const App = () => (
         </BrowserRouter>
       </TooltipProvider>
     </AuthProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 
