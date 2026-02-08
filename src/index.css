@@ -1,69 +1,59 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
-
+    --background: 0 0% 99%;
+    --foreground: 224 71% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-
+    --card-foreground: 224 71% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-
-    --primary: 220 91% 54%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
-
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-
-    --accent: 220 91% 54%;
-    --accent-foreground: 210 40% 98%;
-
+    --popover-foreground: 224 71% 4%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 71% 4%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 96%;
+    --accent-foreground: 224 71% 4%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 221 91% 54%;
-
-    --radius: 0.75rem;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221 83% 53%;
+    --radius: 0.625rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    /* Sidebar */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 71% 4%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 224 71% 4%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 221 83% 53%;
+    /* Page background (subtle off-white for dashboards) */
+    --page-bg: 220 20% 97%;
+    /* Status semantic colors */
+    --status-pending: 38 92% 50%;
+    --status-confirmed: 142 71% 45%;
+    --status-rejected: 0 84% 60%;
+    --status-completed: 221 83% 53%;
+    --status-cancelled: 220 9% 46%;
   }
 
   .dark {
-    --background: 222 47% 11%;
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
-
-    --card: 222 47% 11%;
+    --card: 224 71% 6%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 220 91% 54%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 217 33% 18%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217 33% 18%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 220 91% 54%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 33% 18%;
-    --input: 217 33% 18%;
-    --ring: 224 71% 45%;
+    --sidebar-background: 224 71% 6%;
+    --sidebar-foreground: 210 40% 98%;
+    --border: 217 33% 17%;
+    --page-bg: 224 71% 6%;
   }
 }
 
@@ -71,52 +61,70 @@
   * {
     @apply border-border;
   }
-  
   body {
-    @apply bg-background text-foreground transition-colors duration-300;
+    @apply bg-background text-foreground antialiased;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-medium tracking-tight;
+}
+
+@layer components {
+  /* Card surfaces */
+  .paper-card {
+    @apply bg-card rounded-xl border border-border shadow-sm;
   }
-  
-  h1 {
-    @apply text-4xl sm:text-5xl lg:text-6xl;
-  }
-  
-  h2 {
-    @apply text-3xl sm:text-4xl lg:text-5xl;
-  }
-  
-  h3 {
-    @apply text-2xl sm:text-3xl;
-  }
-  
-  p {
-    @apply leading-relaxed text-muted-foreground;
-  }
-  
-  /* Custom glass effect */
   .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-soft;
+    @apply bg-card/80 backdrop-blur-xl border border-border/50;
   }
-  
-  .dark .glass {
-    @apply bg-black/30 backdrop-blur-md border border-white/10;
+  /* Layout */
+  .page-content {
+    @apply flex-1 overflow-auto p-4 sm:p-6 lg:p-8;
   }
-  
-  /* Smooth transitions */
-  .page-transition {
-    @apply transition-all duration-300 ease-out-expo;
+  .page-header {
+    @apply mb-6 lg:mb-8;
   }
-  
-  /* Hover effects */
-  .hover-lift {
-    @apply transition-all duration-300 ease-out-expo;
+  .page-title {
+    @apply text-xl sm:text-2xl font-semibold tracking-tight text-foreground;
   }
-  
-  .hover-lift:hover {
-    @apply transform -translate-y-1 shadow-medium;
+  .page-description {
+    @apply mt-1 text-sm text-muted-foreground;
+  }
+  /* Dashboard */
+  .stat-card {
+    @apply paper-card p-5 sm:p-6 transition-all duration-200 hover:shadow-md;
+  }
+  .dashboard-grid {
+    @apply max-w-7xl mx-auto space-y-6 lg:space-y-8;
+  }
+  .dashboard-page-bg {
+    background-color: hsl(var(--page-bg));
+  }
+  /* Status badges - explicit for Tailwind purge */
+  .badge-pending {
+    @apply bg-amber-500/15 text-amber-700 dark:text-amber-400 border border-amber-500/20;
+  }
+  .badge-confirmed {
+    @apply bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20;
+  }
+  .badge-rejected {
+    @apply bg-red-500/15 text-red-700 dark:text-red-400 border border-red-500/20;
+  }
+  .badge-completed {
+    @apply bg-primary/15 text-primary border border-primary/20;
+  }
+  .badge-cancelled {
+    @apply bg-muted text-muted-foreground border border-border;
+  }
+  .badge-admin {
+    @apply bg-violet-500/15 text-violet-700 dark:text-violet-400 border border-violet-500/20;
+  }
+  .badge-user {
+    @apply bg-primary/15 text-primary border border-primary/20;
+  }
+}
+
+@layer utilities {
+  .animate-in {
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   }
 }

@@ -4,33 +4,26 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-background border-t border-border py-8 mt-auto">
+    <footer className="border-t border-border bg-card/50 py-12 mt-auto">
       <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="relative w-8 h-8 rounded-full flex items-center justify-center overflow-hidden">
-                <img
-                  src="/logo.png"
-                  alt="Logo"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-
-              <span className="font-medium text-lg text-foreground">
-                Interview Haven
-              </span>
+              <img
+                src="/logo.png"
+                alt="Interview Haven"
+                className="h-8 w-8 rounded-lg object-cover"
+              />
+              <span className="font-semibold text-foreground">Interview Haven</span>
             </div>
-            <p className="text-sm">
+            <p className="text-sm text-muted-foreground max-w-xs">
               Simplifying the interview process for IT students with a seamless
               scheduling experience.
             </p>
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-foreground mb-4">
-              Quick Links
-            </h3>
+            <h3 className="text-sm font-medium text-foreground mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -42,7 +35,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/schedule"
+                  to="/new-request"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
                   Schedule Interview
@@ -53,7 +46,7 @@ const Footer = () => {
                   to="/about"
                   className="text-sm text-muted-foreground hover:text-primary transition-colors"
                 >
-                  About Us
+                  About
                 </Link>
               </li>
             </ul>
@@ -82,7 +75,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t border-border text-center">
+        <div className="mt-10 pt-8 border-t border-border text-center">
           <p className="text-sm text-muted-foreground">
             &copy; {year} Interview Haven. All rights reserved.
           </p>

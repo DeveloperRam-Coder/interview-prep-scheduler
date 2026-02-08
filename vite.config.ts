@@ -16,11 +16,21 @@ import path from "path";
 //   };
 // }
 
-// Vite config
+// Vite config – /api is proxied to backend (default port 5000) in dev
 export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/api": {
+        target: "http://localhost:5001",
+        changeOrigin: true,
+      },
+      "/socket.io": {
+        target: "http://localhost:5001",
+        ws: true,
+      },
+    },
   },
   plugins: [
     react(),

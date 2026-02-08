@@ -20,10 +20,15 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['SF Pro Display', 'system-ui', 'sans-serif'],
-				mono: ['SF Mono', 'monospace'],
+				sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+				mono: ['ui-monospace', 'monospace'],
+			},
+			spacing: {
+				'sidebar': '16rem',
+				'sidebar-lg': '18rem',
 			},
 			colors: {
+				'page-bg': 'hsl(var(--page-bg))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',

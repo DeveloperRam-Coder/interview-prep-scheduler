@@ -2,6 +2,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import api from '@/lib/api';
 import StepIndicator from './interview/StepIndicator';
 import InterviewPersonalDetails from './interview/InterviewPersonalDetails';
 import InterviewTypeSelection from './interview/InterviewTypeSelection';
@@ -44,23 +45,26 @@ const InterviewForm = () => {
     setCurrentStep(currentStep - 1);
   };
 
-  const handleSubmit = () => {
-    // In a real app, you would send this data to your backend
-    console.log('Submitting form data:', formData);
-    
-    // Show success toast
-    toast.success('Interview scheduled successfully!');
-    
-    // Navigate to success page with form data
-    navigate('/success', { state: { formData } });
+  const handleSubmit = async () => {
+    try {
+      await api.post('/interviews', {
+        interviewType: formData.interviewType,
+        date: formData.date?.toISOString(),
+        time: formData.time,
+        additionalInfo: formData.additionalInfo
+      });
+      
+      toast.success('Interview scheduled successfully!');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error('Failed to schedule interview');
+    }
   };
   
   return (
     <div className="w-full max-w-3xl mx-auto glass rounded-2xl p-6 md:p-8 shadow-medium animate-scale-in">
-      {/* Step indicator */}
       <StepIndicator currentStep={currentStep} />
       
-      {/* Step 1: Personal Details */}
       {currentStep === 1 && (
         <InterviewPersonalDetails 
           name={formData.name}
@@ -70,7 +74,6 @@ const InterviewForm = () => {
         />
       )}
       
-      {/* Step 2: Interview Type */}
       {currentStep === 2 && (
         <InterviewTypeSelection 
           interviewTypes={interviewTypes}
@@ -79,7 +82,6 @@ const InterviewForm = () => {
         />
       )}
       
-      {/* Step 3: Schedule */}
       {currentStep === 3 && (
         <InterviewScheduling 
           date={formData.date}
@@ -88,7 +90,7 @@ const InterviewForm = () => {
           updateField={updateField}
         />
       )}
-      {/* Form controls */}
+      
       <FormControls 
         currentStep={currentStep}
         handleBack={handleBack}

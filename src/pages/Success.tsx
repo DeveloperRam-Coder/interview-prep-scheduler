@@ -177,7 +177,7 @@ const Success = () => {
                     </li>
                     <li className="flex items-start">
                       <span className="text-primary mr-2">•</span>
-                      <span className="text-black dark:text-white">Check out our practice resources in the dashboard</span>
+                      <span className="text-black dark:text-white">Test your equipment and internet connection before the interview</span>
                     </li>
                   </ul>
                 </div>
@@ -192,9 +192,9 @@ const Success = () => {
                         Return Home
                       </Button>
                     </Link>
-                    <Link to="/dashboard" className="w-full sm:w-auto">
+                    <Link to="/schedule" className="w-full sm:w-auto">
                       <Button className="w-full">
-                        Go to Dashboard
+                        Schedule Another
                         <ArrowRight className="ml-2 h-4 w-4" />
                       </Button>
                     </Link>
