@@ -8,12 +8,12 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { UserPlus, Mail, Lock, User, Phone } from "lucide-react";
+import { UserPlus, Mail, Lock, User, Phone, CheckCircle2, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -22,6 +22,7 @@ const Register = () => {
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "USER",
   });
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
@@ -40,9 +41,14 @@ const Register = () => {
         email: formData.email,
         password: formData.password,
         phone: formData.phone || undefined,
+        role: formData.role,
       });
       toast.success("Account created successfully!");
-      navigate("/dashboard");
+      if (formData.role === 'INTERVIEWER') {
+        navigate("/interviewer/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Registration failed");
     } finally {
@@ -51,142 +57,223 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 dashboard-page-bg transition-colors duration-300">
-      <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <Link to="/" className="inline-flex items-center gap-2">
-            <img
-              src="/logo.png"
-              alt="Interview Haven"
-              className="h-10 w-10 rounded-lg object-cover"
-            />
-            <span className="text-xl font-semibold text-foreground">
-              Interview Haven
-            </span>
-          </Link>
-          <p className="text-sm text-muted-foreground">Create your account</p>
-        </div>
+    <div className="h-screen w-full flex overflow-hidden bg-background">
+      {/* Left Side: Visual/Hero (Hidden on mobile) */}
+      <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-primary items-center justify-center p-12">
+        {/* Animated Background Blobs */}
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob" />
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob animation-delay-4000" />
 
-        <Card className="border-border shadow-lg transition-all duration-300 hover:shadow-xl">
-          <CardHeader>
-            <CardTitle>Sign up</CardTitle>
-            <CardDescription>
-              Enter your details to create an account
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id="name"
-                    placeholder="John Doe"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
-                    className="pl-9 h-10"
-                    required
-                  />
+        {/* Dynamic Mesh Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary via-indigo-600 to-purple-700 opacity-90" />
+
+        <div className="relative z-10 w-full max-w-lg">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="space-y-8 text-white"
+          >
+            <div className="space-y-4">
+              <h1 className="text-5xl font-bold tracking-tight leading-tight">
+                Start your <span className="text-secondary tracking-tighter">career</span> journey.
+              </h1>
+              <p className="text-indigo-100 text-lg">
+                Create an account to access the best interview resources and scheduling
+                tools in the industry.
+              </p>
+            </div>
+
+            <div className="space-y-4 pt-6">
+              {[
+                "Customized interview paths",
+                "Verified industry experts",
+                "Advanced tracking & analytics",
+                "Join a growing community"
+              ].map((item, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 + (idx * 0.1) }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/20">
+                    <CheckCircle2 className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="text-indigo-50 font-medium">{item}</span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Right Side: Register Form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 md:p-12 lg:p-16 relative overflow-y-auto lg:overflow-hidden">
+        <div className="w-full max-w-md space-y-6 lg:space-y-4 animate-in fade-in slide-in-from-right-4 duration-700 py-8 lg:py-0">
+          <div className="text-center lg:text-left space-y-2">
+            <Link to="/" className="inline-flex lg:hidden items-center gap-2 mb-4">
+              <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center">
+                <UserPlus className="h-6 w-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold tracking-tight text-foreground">
+                Interview Haven
+              </span>
+            </Link>
+            <h2 className="text-3xl font-bold tracking-tight text-foreground">
+              Create Account
+            </h2>
+            <p className="text-muted-foreground">
+              Join us today and start preparing
+            </p>
+          </div>
+
+          <Card className="border-none shadow-none bg-transparent">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-3">
+                <div className="space-y-1.5 grayscale-0">
+                  <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
+                  <div className="relative group">
+                    <User className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="name"
+                      placeholder="John Doe"
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className="pl-10 h-10 bg-muted/50 border-transparent focus:bg-background focus:border-primary transition-all rounded-xl"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+                  <div className="relative group">
+                    <Mail className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className="pl-10 h-10 bg-muted/50 border-transparent focus:bg-background focus:border-primary transition-all rounded-xl"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    value={formData.email}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="phone" className="text-sm font-medium">Phone (optional)</Label>
+                  <div className="relative group">
+                    <Phone className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      placeholder="+1 (555) 000-0000"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                      className="pl-10 h-10 bg-muted/50 border-transparent focus:bg-background focus:border-primary transition-all rounded-xl"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="role" className="text-sm font-medium">Account Type</Label>
+                  <select
+                    id="role"
+                    value={formData.role}
                     onChange={(e) =>
-                      setFormData({ ...formData, email: e.target.value })
+                      setFormData({ ...formData, role: e.target.value })
                     }
-                    className="pl-9 h-10"
-                    required
-                  />
+                    className="flex h-10 w-full rounded-xl border-transparent bg-muted/50 px-3 py-2 text-sm transition-all focus:bg-background focus:ring-2 focus:ring-primary focus:outline-none"
+                  >
+                    <option value="USER">Candidate</option>
+                    <option value="INTERVIEWER">Interviewer</option>
+                  </select>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone (optional)</Label>
-                <div className="relative">
-                  <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+1 (555) 000-0000"
-                    value={formData.phone}
-                    onChange={(e) =>
-                      setFormData({ ...formData, phone: e.target.value })
-                    }
-                    className="pl-9 h-10"
-                  />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="password font-medium">Password</Label>
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      className="pl-10 h-10 bg-muted/50 border-transparent focus:bg-background focus:border-primary transition-all rounded-xl"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="confirmPassword font-medium">Confirm Password</Label>
+                  <div className="relative group">
+                    <Lock className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      className="pl-10 h-10 bg-muted/50 border-transparent focus:bg-background focus:border-primary transition-all rounded-xl"
+                      required
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={(e) =>
-                      setFormData({ ...formData, password: e.target.value })
-                    }
-                    className="pl-9 h-10"
-                    required
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        confirmPassword: e.target.value,
-                      })
-                    }
-                    className="pl-9 h-10"
-                    required
-                  />
-                </div>
-              </div>
+
               <Button
                 type="submit"
-                className="w-full h-10"
+                className="w-full h-11 text-base font-semibold transition-all duration-300 hover:scale-[1.01] rounded-xl shadow-lg shadow-primary/20 mt-4"
                 disabled={loading}
               >
-                <UserPlus className="h-4 w-4 mr-2" />
-                {loading ? "Creating account…" : "Create account"}
+                {loading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    Creating account…
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center gap-2">
+                    Create account <ArrowRight className="h-4 w-4" />
+                  </div>
+                )}
               </Button>
-            </CardContent>
-          </form>
-          <CardFooter className="border-t border-border pt-6">
-            <p className="text-center text-sm text-muted-foreground w-full">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="font-medium text-primary hover:underline"
-              >
-                Sign in
-              </Link>
-            </p>
-          </CardFooter>
-        </Card>
+            </form>
+          </Card>
+
+          <p className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link
+              to="/login"
+              className="font-semibold text-primary hover:text-primary/80 transition-colors"
+            >
+              Sign in here
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
 };
 
 export default Register;
+

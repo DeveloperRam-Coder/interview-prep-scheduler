@@ -1,225 +1,179 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell, TableCaption } from '../components/ui/table';
-import { Input } from '../components/ui/input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../components/ui/tabs';
-import { ChartContainer } from '../components/ui/chart';
-import { Button } from '../components/ui/button';
-import { Pagination, PaginationContent, PaginationItem, PaginationNext, PaginationPrevious } from '../components/ui/pagination';
-import { Search } from 'lucide-react';
+import { useEffect, useState, useMemo } from 'react';
+import DashboardLayout from '@/components/layout/DashboardLayout';
+import { StatsCards } from '@/components/dashboard/StatsCards';
+import { ChartComponent } from '@/components/dashboard/ChartComponent';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Loader2 } from 'lucide-react';
+import { format } from 'date-fns';
+import api from '@/lib/api'; // Assuming generic API utility exist
 
 interface Interview {
-  id: number;
-  name: string;
-  email: string;
+  id: string;
   interviewType: string;
   date: string;
   time: string;
-  additionalInfo: string;
+  status: string;
+  meetingUrl?: string;
+  additionalInfo?: string;
 }
-
-const mockFetchScheduledInterviews = () => {
-  // Simulate an API call with more data
-  const types = ['Technical', 'Behavioral', 'Mock'];
-  const data: Interview[] = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    name: `Candidate ${i + 1}`,
-    email: `candidate${i + 1}@example.com`,
-    interviewType: types[i % 3],
-    date: `2024-07-${(i % 28) + 1}`,
-    time: `${9 + (i % 8)}:00 AM`,
-    additionalInfo: i % 5 === 0 ? 'Special request' : '',
-  }));
-  return Promise.resolve(data);
-};
-
-const PAGE_SIZE = 10;
 
 const Dashboard = () => {
   const [interviews, setInterviews] = useState<Interview[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [sortBy, setSortBy] = useState<'date' | 'name' | 'type'>('date');
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   useEffect(() => {
-    mockFetchScheduledInterviews().then((data) => {
-      setInterviews(data);
-      setLoading(false);
-    });
+    // Mock API call or fetch real data
+    const fetchInterviews = async () => {
+      try {
+        // In a real app, use: const { data } = await api.get('/interviews');
+        // Simulating delay
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Mock data
+        const mockData: Interview[] = [
+          { id: '1', interviewType: 'technical', date: '2024-05-15', time: '10:00', status: 'CONFIRMED', meetingUrl: 'https://meet.google.com/abc-defg-hij' },
+          { id: '2', interviewType: 'behavioral', date: '2024-05-18', time: '14:00', status: 'PENDING' },
+          { id: '3', interviewType: 'mock', date: '2024-05-10', time: '11:00', status: 'COMPLETED' },
+          { id: '4', interviewType: 'technical', date: '2024-05-20', time: '09:00', status: 'CONFIRMED' },
+          { id: '5', interviewType: 'behavioral', date: '2024-05-22', time: '16:00', status: 'CANCELLED' },
+        ];
+        setInterviews(mockData);
+      } catch (error) {
+        console.error('Failed to fetch interviews', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInterviews();
   }, []);
 
-  // Filter and sort
-  const filtered = useMemo(() => {
-    let data = interviews;
-    if (search) {
-      data = data.filter((i) =>
-        i.name.toLowerCase().includes(search.toLowerCase()) ||
-        i.email.toLowerCase().includes(search.toLowerCase()) ||
-        i.interviewType.toLowerCase().includes(search.toLowerCase())
-      );
-    }
-    data = [...data].sort((a, b) => {
-      let cmp = 0;
-      if (sortBy === 'date') cmp = a.date.localeCompare(b.date);
-      if (sortBy === 'name') cmp = a.name.localeCompare(b.name);
-      if (sortBy === 'type') cmp = a.interviewType.localeCompare(b.interviewType);
-      return sortDir === 'asc' ? cmp : -cmp;
-    });
-    return data;
-  }, [interviews, search, sortBy, sortDir]);
-
-  const paged = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return filtered.slice(start, start + PAGE_SIZE);
-  }, [filtered, page]);
-
-  // Stats
-  const total = interviews.length;
-  const upcoming = interviews.filter(i => new Date(i.date) >= new Date()).length;
-  const typeCounts = useMemo(() => {
-    return interviews.reduce((acc, i) => {
-      acc[i.interviewType] = (acc[i.interviewType] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+  // Stats calculation
+  const stats = useMemo(() => {
+    return {
+      total: interviews.length,
+      upcoming: interviews.filter(i => new Date(`${i.date}T${i.time}`) > new Date() && i.status !== 'CANCELLED').length,
+      completed: interviews.filter(i => i.status === 'COMPLETED').length,
+      cancelled: interviews.filter(i => i.status === 'CANCELLED').length,
+    };
   }, [interviews]);
 
-  // Chart config
-  const chartConfig = useMemo(() => {
-    return Object.keys(typeCounts).reduce((acc, type) => {
-      acc[type] = { label: type, color: type === 'Technical' ? '#3b82f6' : type === 'Behavioral' ? '#f59e42' : '#10b981' };
+  // Chart data
+  const chartData = useMemo(() => {
+    const types = interviews.reduce((acc, curr) => {
+      acc[curr.interviewType] = (acc[curr.interviewType] || 0) + 1;
       return acc;
-    }, {} as any);
-  }, [typeCounts]);
+    }, {} as Record<string, number>);
+
+    return [
+      { name: 'Technical', total: types['technical'] || 0 },
+      { name: 'Behavioral', total: types['behavioral'] || 0 },
+      { name: 'Mock', total: types['mock'] || 0 },
+    ];
+  }, [interviews]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-1 w-full flex flex-col items-center justify-start py-8 bg-background">
-        <div className="container w-full max-w-6xl">
-          {/* Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="text-center py-6">
-              <CardTitle className="text-4xl font-bold">{total}</CardTitle>
-              <p className="text-muted-foreground mt-2">Total Interviews</p>
-            </Card>
-            <Card className="text-center py-6">
-              <CardTitle className="text-4xl font-bold">{upcoming}</CardTitle>
-              <p className="text-muted-foreground mt-2">Upcoming Interviews</p>
-            </Card>
-            <Card className="text-center py-6">
-              <CardTitle className="text-4xl font-bold">{Object.keys(typeCounts).length}</CardTitle>
-              <p className="text-muted-foreground mt-2">Interview Types</p>
-            </Card>
-          </div>
+    <DashboardLayout title="Dashboard">
+      <div className="space-y-6">
+        <StatsCards {...stats} />
 
-          {/* Chart */}
-          <div className="mb-8">
-            <Card>
-              <CardHeader>
-                <CardTitle>Interview Types Distribution</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full h-64">
-                  <ChartContainer config={chartConfig}>
-                    {/* Example: Pie chart using recharts */}
-                    {/* You can replace with BarChart, LineChart, etc. */}
-                    <></>
-                  </ChartContainer>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <ChartComponent data={chartData} />
 
-          {/* Table Controls */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-            <div className="flex items-center gap-2">
-              <Search className="h-5 w-5 text-muted-foreground" />
-              <Input
-                placeholder="Search by name, email, or type..."
-                value={search}
-                onChange={e => { setSearch(e.target.value); setPage(1); }}
-                className="w-64"
-              />
-            </div>
-            <div className="flex gap-2">
-              <Button variant={sortBy === 'date' ? 'default' : 'outline'} onClick={() => setSortBy('date')}>Date</Button>
-              <Button variant={sortBy === 'name' ? 'default' : 'outline'} onClick={() => setSortBy('name')}>Name</Button>
-              <Button variant={sortBy === 'type' ? 'default' : 'outline'} onClick={() => setSortBy('type')}>Type</Button>
-              <Button variant="ghost" onClick={() => setSortDir(sortDir === 'asc' ? 'desc' : 'asc')}>
-                {sortDir === 'asc' ? 'Asc' : 'Desc'}
-              </Button>
-            </div>
-          </div>
-
-          {/* Data Table */}
-          <Card>
+          <Card className="col-span-3">
             <CardHeader>
-              <CardTitle>Scheduled Interviews</CardTitle>
+              <CardTitle>Recent Activity</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableCaption>All scheduled interviews</TableCaption>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Additional Info</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {loading ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center">Loading...</TableCell>
-                      </TableRow>
-                    ) : paged.length === 0 ? (
-                      <TableRow>
-                        <TableCell colSpan={6} className="text-center">No interviews found.</TableCell>
-                      </TableRow>
-                    ) : (
-                      paged.map((interview) => (
-                        <TableRow key={interview.id}>
-                          <TableCell>{interview.name}</TableCell>
-                          <TableCell>{interview.email}</TableCell>
-                          <TableCell>{interview.interviewType}</TableCell>
-                          <TableCell>{interview.date}</TableCell>
-                          <TableCell>{interview.time}</TableCell>
-                          <TableCell>{interview.additionalInfo}</TableCell>
-                        </TableRow>
-                      ))
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-              {/* Pagination */}
-              <div className="flex justify-end mt-4">
-                <Pagination>
-                  <PaginationContent>
-                    <PaginationItem>
-                      <PaginationPrevious onClick={() => setPage(p => Math.max(1, p - 1))} size={undefined} />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <span className="px-3 py-1 rounded bg-muted text-muted-foreground">Page {page} of {Math.ceil(filtered.length / PAGE_SIZE)}</span>
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationNext onClick={() => setPage(p => Math.min(Math.ceil(filtered.length / PAGE_SIZE), p + 1))} size={undefined} />
-                    </PaginationItem>
-                  </PaginationContent>
-                </Pagination>
+              <div className="space-y-8">
+                {loading ? (
+                  <div className="flex justify-center p-4">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                  </div>
+                ) : (
+                  interviews.slice(0, 5).map((interview) => (
+                    <div key={interview.id} className="flex items-center">
+                      <div className="ml-4 space-y-1">
+                        <p className="text-sm font-medium leading-none capitalize">
+                          {interview.interviewType} Interview
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(interview.date), 'PPP')} at {interview.time}
+                        </p>
+                      </div>
+                      <div className="ml-auto font-medium">
+                        <Badge variant={
+                          interview.status === 'CONFIRMED' ? 'default' :
+                            interview.status === 'PENDING' ? 'secondary' :
+                              interview.status === 'COMPLETED' ? 'outline' : 'destructive'
+                        }>
+                          {interview.status}
+                        </Badge>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
-      </main>
-      <Footer />
-    </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Upcoming Interviews</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Date & Time</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Action</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-4">
+                      <Loader2 className="h-6 w-6 animate-spin mx-auto" />
+                    </TableCell>
+                  </TableRow>
+                ) : interviews.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                      No interviews found.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  interviews.slice(0, 5).map((interview) => (
+                    <TableRow key={interview.id}>
+                      <TableCell className="capitalize font-medium">{interview.interviewType}</TableCell>
+                      <TableCell>{format(new Date(interview.date), 'PP')} - {interview.time}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="capitalize">{interview.status.toLowerCase()}</Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        {interview.meetingUrl ? (
+                          <Button size="sm" variant="link" asChild>
+                            <a href={interview.meetingUrl} target="_blank" rel="noopener noreferrer">Join Link</a>
+                          </Button>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">--</span>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    </DashboardLayout>
   );
 };
 

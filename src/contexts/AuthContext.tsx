@@ -7,7 +7,7 @@ interface User {
   email: string;
   name: string;
   phone?: string;
-  role: 'USER' | 'ADMIN';
+  role: 'USER' | 'ADMIN' | 'INTERVIEWER';
 }
 
 interface AuthContextType {
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const register = useCallback(async (userData: { name: string; email: string; password: string; phone?: string }) => {
+  const register = useCallback(async (userData: { name: string; email: string; password: string; phone?: string; role?: string }) => {
     try {
       const { data } = await api.post('/auth/register', userData);
       localStorage.setItem('token', data.token);

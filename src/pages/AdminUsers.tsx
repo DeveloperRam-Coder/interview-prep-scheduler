@@ -8,11 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Users, Mail, Phone, Calendar } from "lucide-react";
+import { Users, Mail, Phone, Calendar, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getRoleBadgeClass } from "@/lib/status";
+import { Button } from "@/components/ui/button";
 
 const AdminUsers = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -30,6 +31,17 @@ const AdminUsers = () => {
       toast.error("Failed to load users");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteUser = async (userId: string, userName: string) => {
+    if (!confirm(`Are you sure you want to delete user "${userName}"? This will also delete all their interviews and data. This action cannot be undone.`)) return;
+    try {
+      await api.delete(`/admin/users/${userId}`);
+      setUsers(prev => prev.filter(u => u.id !== userId));
+      toast.success("User deleted successfully");
+    } catch (error) {
+      toast.error("Failed to delete user");
     }
   };
 
@@ -121,6 +133,17 @@ const AdminUsers = () => {
                           </div>
                         </div>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteUser(user.id, user.name)}
+                        disabled={user.role === 'ADMIN'}
+                        title={user.role === 'ADMIN' ? 'Cannot delete admin users' : 'Delete user'}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}

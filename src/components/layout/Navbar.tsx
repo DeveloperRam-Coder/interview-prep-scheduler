@@ -24,17 +24,17 @@ const Navbar = () => {
 
   const navLinks = user
     ? [
-        { name: "Home", path: "/" },
-        {
-          name: user.role === "ADMIN" ? "Admin" : "Dashboard",
-          path: user.role === "ADMIN" ? "/admin" : "/dashboard",
-        },
-        { name: "Profile", path: "/profile" },
-      ]
+      { name: "Home", path: "/" },
+      {
+        name: user.role === "ADMIN" ? "Admin" : "Dashboard",
+        path: user.role === "ADMIN" ? "/admin" : "/dashboard",
+      },
+      { name: "Profile", path: "/profile" },
+    ]
     : [
-        { name: "Home", path: "/" },
-        { name: "About", path: "/about" },
-      ];
+      { name: "Home", path: "/" },
+      { name: "About", path: "/about" },
+    ];
 
   return (
     <header

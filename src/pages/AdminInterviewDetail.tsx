@@ -33,6 +33,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useSocket } from "@/contexts/SocketContext";
 
 export default function AdminInterviewDetail() {
   const { id } = useParams<{ id: string }>();
@@ -44,6 +45,9 @@ export default function AdminInterviewDetail() {
   const [meetingUrl, setMeetingUrl] = useState("");
   const [rescheduleDate, setRescheduleDate] = useState("");
   const [rescheduleTime, setRescheduleTime] = useState("");
+  const [possibleInterviewers, setPossibleInterviewers] = useState<any[]>([]);
+  const [selectedInterviewer, setSelectedInterviewer] = useState("");
+  const [assigning, setAssigning] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -59,6 +63,19 @@ export default function AdminInterviewDetail() {
         setInterview(intRes.data);
         setResume(resumeRes.data);
         setMeetingUrl(intRes.data?.meetingUrl ?? "");
+
+        // If pending or assigned, fetch available interviewers
+        if (intRes.data.status === 'PENDING' || intRes.data.status === 'INTERVIEWER_ASSIGNED') {
+          const dateStr = intRes.data.date.toString().split('T')[0];
+          const timeStr = intRes.data.time;
+          try {
+            const availRes = await api.get(`/admin/interviewers/available?date=${dateStr}&time=${timeStr}`);
+            setPossibleInterviewers(availRes.data || []);
+          } catch (e) {
+            console.error("Failed to fetch available interviewers", e);
+          }
+        }
+
       } catch {
         toast.error("Failed to load interview");
         navigate("/admin/interviews");
@@ -67,7 +84,50 @@ export default function AdminInterviewDetail() {
       }
     };
     fetchData();
+    fetchData();
   }, [id, navigate]);
+
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket || !id) return;
+
+    // Listen for updates specific to this interview if possible, or filtered by ID
+    // Since we join room "user:adminId", we receive all updates relevant to admin?
+    // Actually, admins might need to join a specific "admin" room or we filter by ID here.
+    // The current backend emits to user rooms. Admin should receive updates if they are assigned (which they are usually not, they are admin).
+    // Wait, the backend emits to `user:${userId}`. Who is the userId?
+    // In `notifyInterviewerAssignment`, it notifies interviewer and candidate.
+    // It does NOT notify admin explicitly via socket unless admin is one of them.
+    // But Admin might want to see updates.
+    // For now, let's assume Admin refreshes or we add admin notification later.
+    // Actually, let's checking `notification.service.js`.
+
+    // For now, I'll just add the listener in case backend sends it to valid room.
+    // If not, Admin manual refresh is acceptable for MVP.
+    // But let's add it.
+
+    const handleUpdate = (data: any) => {
+      if (data.interviewId === id || data.id === id) {
+        // Refresh
+        api.get(`/admin/interviews/${id}`).then(res => {
+          setInterview(res.data);
+          setMeetingUrl(res.data.meetingUrl || "");
+          toast.info("Interview updated");
+        });
+      }
+    };
+
+    socket.on('interview_updated', handleUpdate);
+    socket.on('interviewer_confirmed', handleUpdate);
+    socket.on('candidate_confirmed', handleUpdate);
+
+    return () => {
+      socket.off('interview_updated', handleUpdate);
+      socket.off('interviewer_confirmed', handleUpdate);
+      socket.off('candidate_confirmed', handleUpdate);
+    };
+  }, [socket, id]);
 
   const handleStatusUpdate = async (status: string) => {
     setSaving(true);
@@ -89,6 +149,22 @@ export default function AdminInterviewDetail() {
       toast.error("Failed to update");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleAssignInterviewer = async () => {
+    if (!selectedInterviewer) return;
+    setAssigning(true);
+    try {
+      await api.post(`/interviews/${id}/assign`, { interviewerId: selectedInterviewer });
+      toast.success("Interviewer assigned successfully");
+      // Refresh data
+      const intRes = await api.get(`/admin/interviews/${id}`);
+      setInterview(intRes.data);
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Failed to assign interviewer");
+    } finally {
+      setAssigning(false);
     }
   };
 
@@ -141,7 +217,7 @@ export default function AdminInterviewDetail() {
             <div className="flex flex-wrap items-center gap-2">
               <CardTitle className="capitalize">{interview.interviewType} Interview</CardTitle>
               <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${getStatusBadgeClass(interview.status)}`}>
-                {interview.status}
+                {interview.status.replace(/_/g, ' ')}
               </span>
             </div>
             <CardDescription>
@@ -158,6 +234,47 @@ export default function AdminInterviewDetail() {
               <p className="text-sm text-muted-foreground">{interview.user?.email}</p>
               {interview.user?.phone && <p className="text-sm text-muted-foreground">{interview.user.phone}</p>}
             </div>
+
+            {/* Assignment Section */}
+            {(interview.status === 'PENDING' || interview.status === 'INTERVIEWER_ASSIGNED') && (
+              <div className="p-4 bg-muted/30 rounded-lg border">
+                <h3 className="font-medium mb-3 flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4 text-primary" />
+                  Assign Interviewer
+                </h3>
+
+                {interview.status === 'INTERVIEWER_ASSIGNED' && (
+                  <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-950/20 text-blue-700 dark:text-blue-300 rounded text-sm mb-4">
+                    Currently assigned to an interviewer. Re-assigning will update the assignment.
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Select value={selectedInterviewer} onValueChange={setSelectedInterviewer}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select available interviewer" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {possibleInterviewers.length === 0 ? (
+                        <SelectItem value="none" disabled>No interviewers available</SelectItem>
+                      ) : (
+                        possibleInterviewers.map((i) => (
+                          <SelectItem key={i.id} value={i.id}>
+                            {i.name} ({i._count?.assignments || 0} assignments)
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={handleAssignInterviewer}
+                    disabled={!selectedInterviewer || assigning}
+                  >
+                    {assigning ? "Assigning..." : "Assign"}
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {resume && (
               <div>
@@ -218,13 +335,18 @@ export default function AdminInterviewDetail() {
                   </div>
                 </div>
                 <div className="flex gap-2">
+                  {/* PENDING status usually means waiting for Admin action, but with interviewer assignment, maybe we don't 'Accept' directly anymore? 
+                      Or maybe 'Accept' means generic acceptance before assignment?
+                      Let's leave existing logic but maybe Hide 'Accept' if we want to force Assignment workflow.
+                      For now I'll leave it as fallback manually managed workflow.
+                  */}
                   <Button
                     onClick={() => handleStatusUpdate("CONFIRMED")}
                     disabled={saving}
                     className="bg-emerald-600 hover:bg-emerald-700"
                   >
                     <CheckCircle className="h-4 w-4 mr-2" />
-                    Accept
+                    Force Confirm
                   </Button>
                   <Button
                     variant="outline"
