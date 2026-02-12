@@ -8,6 +8,8 @@ interface DashboardLayoutProps {
   title: string;
 }
 
+import { motion } from "framer-motion";
+
 const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -15,7 +17,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
     <div className="flex min-h-screen dashboard-page-bg">
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex fixed left-0 top-0 z-30 h-screen w-sidebar flex-col border-r border-sidebar-border bg-sidebar">
-        <Sidebar onNavigate={() => {}} />
+        <Sidebar onNavigate={() => { }} />
       </aside>
 
       {/* Mobile sidebar sheet */}
@@ -28,7 +30,16 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
       {/* Main area */}
       <div className="flex-1 lg:pl-sidebar flex flex-col min-w-0">
         <Topbar title={title} onMenuClick={() => setSidebarOpen(true)} />
-        <main className="page-content">{children}</main>
+        <main className="page-content overflow-hidden">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: "easeOut" }}
+            className="h-full"
+          >
+            {children}
+          </motion.div>
+        </main>
       </div>
     </div>
   );

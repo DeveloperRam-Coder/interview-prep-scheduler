@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './AuthContext';
 import { toast } from 'sonner';
@@ -70,8 +70,10 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, [user]);
 
+    const value = useMemo(() => ({ socket, connected }), [socket, connected]);
+
     return (
-        <SocketContext.Provider value={{ socket, connected }}>
+        <SocketContext.Provider value={value}>
             {children}
         </SocketContext.Provider>
     );

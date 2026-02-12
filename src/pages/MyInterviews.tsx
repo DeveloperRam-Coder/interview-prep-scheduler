@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar, Edit, Trash2, Plus, Video, Clock, MoreVertical, CheckCircle } from "lucide-react";
+import { Calendar, Edit, Trash2, Plus, Video, Clock, MoreVertical, CheckCircle, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import {
@@ -37,8 +37,8 @@ const MyInterviews = () => {
   const [filteredInterviews, setFilteredInterviews] = useState<any[]>([]);
   const [filter, setFilter] = useState("ALL");
   const [loading, setLoading] = useState(true);
+  const [joiningId, setJoiningId] = useState<string | null>(null);
   const navigate = useNavigate();
-
   const { socket } = useSocket();
 
   useEffect(() => {
@@ -96,6 +96,14 @@ const MyInterviews = () => {
     } catch (error) {
       toast.error("Failed to delete interview");
     }
+  };
+
+  const handleJoinMeeting = (id: string, url: string) => {
+    setJoiningId(id);
+    setTimeout(() => {
+      window.open(url, "_blank", "noopener,noreferrer");
+      setJoiningId(null);
+    }, 800);
   };
 
   if (loading) {
@@ -209,6 +217,23 @@ const MyInterviews = () => {
                           Note: {interview.additionalInfo}
                         </p>
                       )}
+                      {interview.assignment?.interviewer && (
+                        <div className="flex items-center gap-2 mt-2 pt-2 border-t border-border/50">
+                          <div className="flex -space-x-1">
+                            <div className="h-6 w-6 rounded-full bg-indigo-100 flex items-center justify-center text-[10px] font-bold text-indigo-700 border border-white">
+                              {interview.assignment.interviewer.name.charAt(0)}
+                            </div>
+                          </div>
+                          <p className="text-sm font-medium text-foreground">
+                            Interviewer: <span className="text-indigo-600 dark:text-indigo-400">{interview.assignment.interviewer.name}</span>
+                          </p>
+                        </div>
+                      )}
+                      {interview.meetingUrl && (
+                        <p className="text-xs text-indigo-500 font-medium mt-1 truncate max-w-[200px]">
+                          Link: {interview.meetingUrl}
+                        </p>
+                      )}
                     </div>
                   </div>
 
@@ -230,11 +255,23 @@ const MyInterviews = () => {
                     )}
 
                     {interview.status === "CONFIRMED" && interview.meetingUrl && (
-                      <Button size="sm" className="gap-2" asChild>
-                        <a href={interview.meetingUrl} target="_blank" rel="noopener noreferrer">
-                          <Video className="h-4 w-4" />
-                          Join Meeting
-                        </a>
+                      <Button
+                        size="sm"
+                        className="gap-2 rounded-full"
+                        disabled={joiningId === interview.id}
+                        onClick={() => handleJoinMeeting(interview.id, interview.meetingUrl)}
+                      >
+                        {joiningId === interview.id ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                            Joining...
+                          </>
+                        ) : (
+                          <>
+                            <Video className="h-4 w-4" />
+                            Join Meeting
+                          </>
+                        )}
                       </Button>
                     )}
 

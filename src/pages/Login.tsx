@@ -192,7 +192,7 @@ const Login = () => {
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-3">
                 Quick Access (Demo)
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="space-y-1">
                   <p className="text-[10px] text-muted-foreground">Candidate</p>
                   <p className="text-xs font-medium truncate">user@example.com</p>
@@ -200,6 +200,10 @@ const Login = () => {
                 <div className="space-y-1">
                   <p className="text-[10px] text-muted-foreground">Admin</p>
                   <p className="text-xs font-medium truncate">admin@example.com</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] text-muted-foreground">Interviewer</p>
+                  <p className="text-xs font-medium truncate">interviewer@example.com</p>
                 </div>
               </div>
             </div>
@@ -211,4 +215,3 @@ const Login = () => {
 };
 
 export default Login;
-

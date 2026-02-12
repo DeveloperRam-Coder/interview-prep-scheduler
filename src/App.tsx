@@ -25,6 +25,7 @@ import NotFound from "./pages/NotFound";
 import InterviewerDashboard from "./pages/InterviewerDashboard";
 import AvailabilityManagement from "./pages/AvailabilityManagement";
 import InterviewerInterviews from "./pages/InterviewerInterviews";
+import InterviewRoom from "./pages/InterviewRoom";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const App = () => (
                 <Route path="/interviewer/dashboard" element={<ProtectedRoute interviewerOnly><InterviewerDashboard /></ProtectedRoute>} />
                 <Route path="/interviewer/availability" element={<ProtectedRoute interviewerOnly><AvailabilityManagement /></ProtectedRoute>} />
                 <Route path="/interviewer/interviews" element={<ProtectedRoute interviewerOnly><InterviewerInterviews /></ProtectedRoute>} />
+                <Route path="/interview-room/:id" element={<ProtectedRoute><InterviewRoom /></ProtectedRoute>} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </BrowserRouter>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useMemo } from 'react';
 import api from '@/lib/api';
 import { toast } from 'sonner';
 
@@ -78,8 +78,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+  const value = useMemo(() => ({
+    user,
+    login,
+    register,
+    logout,
+    updateUser,
+    loading
+  }), [user, login, register, logout, updateUser, loading]);
+
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, updateUser, loading }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
